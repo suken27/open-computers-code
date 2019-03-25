@@ -2,6 +2,9 @@
 	Digging routine for hole expansion
 ]]--
 
+local robot = require("robot")
+local nav = components.navigation
+
 -- empties inventory and returns to the position it was
 function emptyInv()
 
