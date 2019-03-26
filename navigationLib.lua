@@ -98,4 +98,7 @@ function navigationLib.goTo(xDif, yDif, zDif)
 	goToY(yDif);
 end
 
+navigationLib.goTo(5, 6, 7)
+navigationLib.goTo(-5, -6, -7)
+
 return navigationLib
