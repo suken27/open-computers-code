@@ -2,12 +2,12 @@
 	Common robot navigation functionality.
 ]]--
 
-local robot = require("robot")
-local comp = require("component")
-local sides = require("sides")
-local nav = comp.navigation
-
 local navigationLib = {};
+
+local robot = require("robot");
+local comp = require("component");
+local sides = require("sides");
+local nav = comp.navigation;
 
 -- Faces to positive X coordinate
 function navigationLib.facePositiveX()
@@ -98,7 +98,4 @@ function navigationLib.goTo(xDif, yDif, zDif)
 	goToY(yDif);
 end
 
-navigationLib.goTo(5, 6, 7)
-navigationLib.goTo(-5, -6, -7)
-
-return navigationLib
+return navigationLib;

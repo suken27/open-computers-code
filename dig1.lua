@@ -54,8 +54,8 @@ end
 
 -- main execution
 function main()
-	nav.goTo(5, 4, 6)
-	nav.goTo(-5, -4, -6)
+	nav.goTo(5, 4, 6);
+	nav.goTo(-5, -4, -6);
 end
 
 print("Starting digging routine")
