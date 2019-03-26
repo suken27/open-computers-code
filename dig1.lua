@@ -3,8 +3,9 @@
 ]]--
 
 local robot = require("robot")
-local nav = component.navigation
+local comp = require("component")
 local sides = require("sides")
+local nav = comp.navigation
 
 -- goes to a given X distance
 function goToX(xDis)
