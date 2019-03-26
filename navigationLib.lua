@@ -92,7 +92,7 @@ end
 
 -- Goes to a position given by the difference with
 -- the actual position
-function goTo(xDif, yDif, zDif)
+function navigationLib.goTo(xDif, yDif, zDif)
 	goToX(xDif)
 	goToZ(zDif)
 	goToY(yDif)
