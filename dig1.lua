@@ -12,13 +12,12 @@ function goToX(xDis)
 	if(xDis == 0) then
 		return
 	end
-	print(nav.getFacing())
 	if(xDis < 0) then
-		while(not nav.getFacing() == sides.left) do
+		while(not (nav.getFacing() == sides.left)) do
 			robot.turnRight()
 		end
 	else
-		while(not nav.getFacing() == sides.right) do
+		while(not (nav.getFacing() == sides.right)) do
 			robot.turnRight()
 		end
 	end
