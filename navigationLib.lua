@@ -10,28 +10,28 @@ local nav = comp.navigation
 local navigationLib = {}
 
 -- Faces to positive X coordinate
-function facePositiveX()
+function navigationLib.facePositiveX()
 	while(not (nav.getFacing() == sides.left)) do
 		robot.turnRight()
 	end
 end
 
 -- Faces to negative X coordinate
-function faceNegativeX()
+function navigationLib.faceNegativeX()
 	while(not (nav.getFacing() == sides.right)) do
 		robot.turnRight()
 	end
 end
 
 -- Faces to positive Z coordinate
-function facePositiveZ()
+function navigationLib.facePositiveZ()
 	while(not (nav.getFacing() == sides.front)) do
 		robot.turnRight()
 	end
 end
 
 -- Faces to negative Z coordinate
-function faceNegativeZ()
+function navigationLib.faceNegativeZ()
 	while(not (nav.getFacing() == sides.back)) do
 		robot.turnRight()
 	end
@@ -39,7 +39,7 @@ end
 
 -- Goes to a given X position given by the difference 
 -- with the actual position
-function goToX(xDif)
+function navigationLib.goToX(xDif)
 	if(xDif == 0) then
 		return
 	end
@@ -56,7 +56,7 @@ end
 
 -- Goes to a given Z position given by the difference 
 -- with the actual position
-function goToZ(zDif)
+function navigationLib.goToZ(zDif)
 	if(zDif == 0) then
 		return
 	end
@@ -73,7 +73,7 @@ end
 
 -- Goes to a given Y position given by the difference 
 -- with the actual position
-function goToY(yDif)
+function navigationLib.goToY(yDif)
 	if(yDif == 0) then
 		return
 	end
