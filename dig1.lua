@@ -5,31 +5,7 @@
 local robot = require("robot")
 local comp = require("component")
 local sides = require("sides")
-local nav = comp.navigation
-
--- goes to a given X distance
-function goToX(xDis)
-	if(xDis == 0) then
-		return
-	end
-	if(xDis < 0) then
-		while(not (nav.getFacing() == sides.left)) do
-			robot.turnRight()
-		end
-	else
-		while(not (nav.getFacing() == sides.right)) do
-			robot.turnRight()
-		end
-	end
-	for i=1, math.abs(xDis), 1 do
-		robot.forward()
-	end
-end
-
--- goes to given distances letting the y coordinate to the end
-function goToAbove(xDis, yDis, zDis)
-	
-end
+local nav = require("navigationLib")
 
 -- empties inventory and returns to the position it was
 function emptyInv()
@@ -78,7 +54,8 @@ end
 
 -- main execution
 function main()
-	goToX(-20)
+	nav.goTo(5, 4, 6)
+	nav.goTo(-5, -4, -6)
 end
 
 print("Starting digging routine")
