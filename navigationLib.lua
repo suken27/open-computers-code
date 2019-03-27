@@ -111,4 +111,6 @@ function navigationlib.getWaypoint(name)
 	return nil;
 end
 
+navigationlib.getWaypoint(test);
+
 return navigationlib;
