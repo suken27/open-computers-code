@@ -102,11 +102,12 @@ end
 -- (a distance per coordinate)
 function navigationlib.getWaypoint(name)
 	local waypoints = nav.findWaypoints(200);
-	local length = table.getn(waypoints);
-	for i=1, length, 1 do
+	local i = 1;
+	while(not (waypoints[i] == nil)) do
 		if(waypoints[i].label == name) then
 			return waypoints[i].position[1], waypoints[i].position[2], waypoints[i].position[3];
 		end
+		i = i + 1;
 	end
 	return nil;
 end
