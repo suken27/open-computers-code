@@ -2,10 +2,13 @@
 	Digging routine for hole expansion
 ]]--
 
-local robot = require("robot")
-local comp = require("component")
-local sides = require("sides")
-local nav = require("navigationLib")
+local robot = require("robot");
+local comp = require("component");
+local sides = require("sides");
+local nav = require("navigationLib");
+
+-- Distance to the initial dig position
+local initialDigPosition = {};
 
 -- empties inventory and returns to the position it was
 function emptyInv()
@@ -14,10 +17,10 @@ end
 
 -- inventory check
 function spaceCheck()
-	local invSlots = robot.inventorySize()
+	local invSlots = robot.inventorySize();
 	for i=1, invSlots, 1 do
 		if robot.count(i) == 0 then
-			return
+			return;
 		end
 	end
 	-- if this executes, the inventory is full
