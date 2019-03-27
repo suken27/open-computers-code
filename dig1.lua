@@ -5,7 +5,7 @@
 local robot = require("robot");
 local comp = require("component");
 local sides = require("sides");
-local nav = require("navigationLib");
+local nav = require("navigationlib");
 
 -- Distance to the initial dig position
 local initialDigPosition = {};

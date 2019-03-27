@@ -10,28 +10,28 @@ local sides = require("sides");
 local nav = comp.navigation;
 
 -- Faces to positive X coordinate
-function navigationlib.facePositiveX()
+local function navigationlib.facePositiveX()
 	while(not (nav.getFacing() == sides.left)) do
 		robot.turnRight();
 	end
 end
 
 -- Faces to negative X coordinate
-function navigationlib.faceNegativeX()
+local function navigationlib.faceNegativeX()
 	while(not (nav.getFacing() == sides.right)) do
 		robot.turnRight();
 	end
 end
 
 -- Faces to positive Z coordinate
-function navigationlib.facePositiveZ()
+local function navigationlib.facePositiveZ()
 	while(not (nav.getFacing() == sides.front)) do
 		robot.turnRight();
 	end
 end
 
 -- Faces to negative Z coordinate
-function navigationlib.faceNegativeZ()
+local function navigationlib.faceNegativeZ()
 	while(not (nav.getFacing() == sides.back)) do
 		robot.turnRight();
 	end
@@ -39,7 +39,7 @@ end
 
 -- Goes to a given X position given by the difference 
 -- with the actual position
-function navigationlib.goToX(xDif)
+local function navigationlib.goToX(xDif)
 	if(xDif == 0) then
 		return;
 	end
@@ -56,7 +56,7 @@ end
 
 -- Goes to a given Z position given by the difference 
 -- with the actual position
-function navigationlib.goToZ(zDif)
+local function navigationlib.goToZ(zDif)
 	if(zDif == 0) then
 		return;
 	end
@@ -73,7 +73,7 @@ end
 
 -- Goes to a given Y position given by the difference 
 -- with the actual position
-function navigationlib.goToY(yDif)
+local function navigationlib.goToY(yDif)
 	if(yDif == 0) then
 		return;
 	end
@@ -111,7 +111,5 @@ function navigationlib.getWaypoint(name)
 	end
 	return nil;
 end
-
-navigationlib.getWaypoint(test);
 
 return navigationlib;
