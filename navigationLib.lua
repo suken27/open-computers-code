@@ -101,9 +101,15 @@ end
 -- Goes to a position given by the difference with
 -- the actual position
 function navigationlib.goTo(xDif, yDif, zDif)
-	goToX(xDif);
-	goToZ(zDif);
-	goToY(yDif);
+	if(yDif < 0) then
+		goToX(xDif);
+		goToZ(zDif);
+		goToY(yDif);
+	else
+		goToX(yDif);
+		goToZ(xDif);
+		goToY(zDif);
+	end
 end
 
 -- Returns the distance to a given waypoint name

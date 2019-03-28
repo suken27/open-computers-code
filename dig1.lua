@@ -23,7 +23,7 @@ local EMPTY_INVENTORY_SIDE = sides.left;
 local MIN_ENERGY_PERCENTAGE = 0.1;
 
 -- Time to wait to fully charge
-local TIME_CHARGING = 10;
+local TIME_CHARGING = 10000;
 
 --[[ INTERNAL FUNCTIONS ]]--
 
