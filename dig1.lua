@@ -30,10 +30,12 @@ local TIME_CHARGING = 10000;
 -- charges energy capacitor and empties the inventory
 function restoreAndGoBack()
 	local xRet, yRet, zRet = nav.getWaypoint(RESTORING_WAYPOINT_NAME);
+	print("x: ", xRet, " y: ", yRet, " z: ", zRet);
 	nav.goTo(xRet, yRet, zRet);
 	emptyInv();
-	os.sleep(TIME_CHARGING)
-	nav.goTo(xRet * -1, yRet * -1, zRet * -1);
+	os.sleep(TIME_CHARGING);
+	print("x: ", (xRet * -1), " y: ", (yRet * -1), " z: ", (zRet * -1));
+	nav.goTo((xRet * -1), (yRet * -1), (zRet * -1));
 end
 
 -- empties inventory and returns to the position it was
@@ -56,7 +58,7 @@ function spaceCheck()
 		end
 	end
 	-- if this executes, the inventory is full
-	print("Inventory full, going to the storage system.")
+	print("Inventory full, going to the storage system.");
 	restoreAndGoBack();
 end
 
@@ -83,15 +85,15 @@ end
 
 -- mines the block upwards or stores the liquid upwards
 function mine()
-	robot.swingUp()
-	robot.drainUp()
+	robot.swingUp();
+	robot.drainUp();
 end
 
 -- main execution
 function main()
-	emptyInv();
+	restoreAndGoBack();
 end
 
-print("Starting digging routine")
-main()
-print("Ending digging routine")
+print("Starting digging routine");
+main();
+print("Ending digging routine");
