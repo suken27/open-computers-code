@@ -9,29 +9,31 @@ local comp = require("component");
 local sides = require("sides");
 local nav = comp.navigation;
 
+--[[ INTERNAL FUNCTIONS ]]--
+
 -- Faces to positive X coordinate
-local function facePositiveX()
+function facePositiveX()
 	while(not (nav.getFacing() == sides.left)) do
 		robot.turnRight();
 	end
 end
 
 -- Faces to negative X coordinate
-local function faceNegativeX()
+function faceNegativeX()
 	while(not (nav.getFacing() == sides.right)) do
 		robot.turnRight();
 	end
 end
 
 -- Faces to positive Z coordinate
-local function facePositiveZ()
+function facePositiveZ()
 	while(not (nav.getFacing() == sides.front)) do
 		robot.turnRight();
 	end
 end
 
 -- Faces to negative Z coordinate
-local function faceNegativeZ()
+function faceNegativeZ()
 	while(not (nav.getFacing() == sides.back)) do
 		robot.turnRight();
 	end
@@ -39,7 +41,7 @@ end
 
 -- Goes to a given X position given by the difference 
 -- with the actual position
-local function goToX(xDif)
+function goToX(xDif)
 	if(xDif == 0 or xDif == nil) then
 		return;
 	end
@@ -56,7 +58,7 @@ end
 
 -- Goes to a given Z position given by the difference 
 -- with the actual position
-local function goToZ(zDif)
+function goToZ(zDif)
 	if(zDif == 0 or zDif == nil) then
 		return;
 	end
@@ -73,7 +75,7 @@ end
 
 -- Goes to a given Y position given by the difference 
 -- with the actual position
-local function goToY(yDif)
+function goToY(yDif)
 	if(yDif == 0 or yDif == nil) then
 		return;
 	end
@@ -89,6 +91,8 @@ local function goToY(yDif)
 		end
 	end
 end
+
+--[[ MODULE FUNCTIONS ]]--
 
 -- Goes to a position given by the difference with
 -- the actual position
