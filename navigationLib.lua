@@ -106,9 +106,9 @@ function navigationlib.goTo(xDif, yDif, zDif)
 		goToZ(zDif);
 		goToY(yDif);
 	else
-		goToX(yDif);
-		goToZ(xDif);
-		goToY(zDif);
+		goToY(yDif);
+		goToX(xDif);
+		goToZ(zDif);
 	end
 end
 
