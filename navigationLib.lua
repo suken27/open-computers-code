@@ -9,6 +9,10 @@ local comp = require("component");
 local sides = require("sides");
 local nav = comp.navigation;
 
+--[[ SETTINGS ]]--
+
+local WAYPOINT_SEARCH_RANGE = 200;
+
 --[[ INTERNAL FUNCTIONS ]]--
 
 -- Faces to positive X coordinate
@@ -105,7 +109,7 @@ end
 -- Returns the distance to a given waypoint name
 -- (a distance per coordinate)
 function navigationlib.getWaypoint(name)
-	local waypoints = nav.findWaypoints(200);
+	local waypoints = nav.findWaypoints(WAYPOINT_SEARCH_RANGE);
 	local i = 1;
 	while(not (waypoints[i] == nil)) do
 		if(waypoints[i].label == name) then
@@ -114,6 +118,26 @@ function navigationlib.getWaypoint(name)
 		i = i + 1;
 	end
 	return nil;
+end
+
+-- Goes to a given waypoint
+function navigationlib.goToWaypoint(name)
+	navigationlib.goTo(navigationlib.getWaypoint(name));
+end
+
+-- Faces a given side
+function navigationlib.faceSide(side)
+	if(side == sides.back) then
+		faceNegativeZ();
+	elseif(side == sides.front) then
+		facePositiveZ();
+	elseif(side == sides.right) then
+		faceNegativeX();
+	elseif(side == sides.left) then
+		facePositiveX();
+	else
+		error("Side: '" + side + "' is not valid.");
+	end
 end
 
 return navigationlib;

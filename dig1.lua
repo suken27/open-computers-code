@@ -6,13 +6,45 @@ local robot = require("robot");
 local comp = require("component");
 local sides = require("sides");
 local nav = require("navigationlib");
+local os = require("os");
+
+--[[ SETTINGS ]]--
 
 -- Distance to the initial dig position
 local initialDigPosition = {};
 
+-- Restoring waypoint name
+local RESTORING_WAYPOINT_NAME = "test";
+
+-- Emptying inventory waypoint side
+local EMPTY_INVENTORY_SIDE = sides.left;
+
+-- Minimum percentage of energy to keep working
+local MIN_ENERGY_PERCENTAGE = 0.1;
+
+-- Time to wait to fully charge
+local TIME_CHARGING = 10;
+
+--[[ INTERNAL FUNCTIONS ]]--
+
+-- charges energy capacitor and empties the inventory
+function restoreAndGoBack()
+	local xRet, yRet, zRet = nav.getWaypoint(RESTORING_WAYPOINT_NAME);
+	nav.goTo(xRet, yRet, zRet);
+	emptyInv();
+	os.sleep(TIME_CHARGING)
+	nav.goTo(xRet * -1, yRet * -1, zRet * -1);
+end
+
 -- empties inventory and returns to the position it was
 function emptyInv()
-
+	nav.faceSide(EMPTY_INVENTORY_SIDE);
+	local invSlots = robot.inventorySize();
+	for i=1, invSlots, 1 do
+		robot.select(i);
+		robot.drop();
+	end
+	robot.select(1);
 end
 
 -- inventory check
@@ -25,17 +57,17 @@ function spaceCheck()
 	end
 	-- if this executes, the inventory is full
 	print("Inventory full, going to the storage system.")
-	emptyInv()
+	restoreAndGoBack();
 end
 
 -- energy check
 function energyCheck()
-	local maxEnergy = computer.maxEnergy()
-	local energy = computer.energy()
-	local minLevel = maxEnergy * 0.1
+	local maxEnergy = computer.maxEnergy();
+	local energy = computer.energy();
+	local minLevel = maxEnergy * MIN_ENERGY_PERCENTAGE;
 	if(energy < minLevel) then
-		print("Energy low, going to charge.")
-		-- TODO returning to the charger
+		print("Energy low, going to charge.");
+		restoreAndGoBack();
 	end
 end
 
@@ -57,8 +89,7 @@ end
 
 -- main execution
 function main()
-	nav.goTo(5, 4, 6);
-	nav.goTo(-5, -4, -6);
+	emptyInv();
 end
 
 print("Starting digging routine")
