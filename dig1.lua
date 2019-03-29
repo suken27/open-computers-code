@@ -3,7 +3,7 @@
 ]]--
 
 local comp = require("component");
-local robot = comp.robot.function();
+local robot = comp.robot;
 local sides = require("sides");
 local nav = require("navigationlib");
 local navcomp = comp.navigation;
@@ -257,4 +257,4 @@ end
 
 main();
 
--- V6
+-- V7
