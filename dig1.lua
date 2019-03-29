@@ -84,7 +84,10 @@ end
 
 -- Goes to the initial position
 function goToInitial()
-	nav.goTo(INITIAL_DIG_POSITION[1], INITIAL_DIG_POSITION[2], INITIAL_DIG_POSITION[3]);
+	local disWay = {};
+	disWay[1], disWay[2], disWay[3] = nav.getWaypoint(RESTORING_WAYPOINT_NAME);
+	local dis = distanceTable(INITIAL_DIG_POSITION, disWay);
+	nav.goTo(dis[1], dis[2], dis[3]);
 end
 
 -- Internal function to calculate the distance
@@ -184,8 +187,8 @@ end
 
 -- Returns the ordered mining directions.
 function getMiningDirections()
-	local dX, dY, dZ = distanceTable(INITIAL_DIG_POSITION, FINAL_DIG_POSITION);
-	local values = {math.abs(dX), math.abs(dY), math.abs(dZ)};
+	local d = distanceTable(INITIAL_DIG_POSITION, FINAL_DIG_POSITION);
+	local values = {math.abs(d[1]), math.abs(d[2]), math.abs(d[3])};
 	for i = 1, 3, 1 do
 		for j = 2, 3, 1 do
 			if(i < j) then
