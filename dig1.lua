@@ -86,7 +86,7 @@ end
 function goToInitial()
 	local disWay = {};
 	disWay[1], disWay[2], disWay[3] = nav.getWaypoint(RESTORING_WAYPOINT_NAME);
-	local dis = distanceTable(INITIAL_DIG_POSITION, disWay);
+	local dis = distanceTable(disWay, INITIAL_DIG_POSITION);
 	nav.goTo(dis[1], dis[2], dis[3]);
 end
 
