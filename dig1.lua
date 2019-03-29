@@ -148,8 +148,8 @@ function move(miningDirections, actualDirections)
 	local wayDis = {};
 	wayDis[1], wayDis[2], wayDis[3] = nav.getWaypoint(RESTORING_WAYPOINT_NAME);
 	local stopDis = {};
-	local disToFinal = distanceTables(wayDis, FINAL_DIG_POSITION);
-	local disToInitial = distanceTables(wayDis, INITIAL_DIG_POSITION);
+	local disToFinal = distanceTable(wayDis, FINAL_DIG_POSITION);
+	local disToInitial = distanceTable(wayDis, INITIAL_DIG_POSITION);
 	local notFound = true;
 	local j = 1;
 	for i = 1, 3, 1 do
@@ -257,4 +257,4 @@ end
 
 main();
 
--- V4
+-- V5
