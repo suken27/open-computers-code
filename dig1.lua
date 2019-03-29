@@ -4,20 +4,22 @@
 
 local comp = require("component");
 local robot = comp.robot;
+local robotapi = require("robot");
 local sides = require("sides");
 local nav = require("navigationlib");
 local navcomp = comp.navigation;
 local os = require("os");
+local computer = require("computer");
 
 --[[ SETTINGS ]]--
 
 -- Distance to the initial dig position
 -- from the reference waypoint
-local INITIAL_DIG_POSITION = {-4, 14, 0};
+local INITIAL_DIG_POSITION = {4, -14, 0};
 
 -- Distance to the final dig position from
 -- the reference waypoint
-local FINAL_DIG_POSITION = {-4, 14, 0};
+local FINAL_DIG_POSITION = {4, -14, 0};
 
 -- Restoring waypoint name
 local RESTORING_WAYPOINT_NAME = "test";
@@ -84,6 +86,8 @@ function goToInitial()
 	local disWay = {};
 	disWay[1], disWay[2], disWay[3] = nav.getWaypoint(RESTORING_WAYPOINT_NAME);
 	local dis = distanceAToB(disWay, INITIAL_DIG_POSITION);
+	print("DEBUG: goToInitial() Y substraction -> ", INITIAL_DIG_POSITION[2], "-", disWay[2], "=", dis[2]);
+	print("DEBUG: goToInitial() -> ", dis[1], " ", dis[2], " ", dis[3]);
 	nav.goTo(dis[1], dis[2], dis[3]);
 end
 
@@ -106,7 +110,7 @@ end
 
 -- Calculates the distance from the a point to the b point
 function distanceAToB(a, b)
-	local dist = {(b[1] - a[1]), (b[2] - a[2]), (b[3] - a[3])};
+	local dist = {(a[1] - b[1]), (a[2] - b[2]), (a[3] - b[3])};
 	return dist;
 end
 
@@ -119,7 +123,7 @@ function diferentDirectionMove(actualDirections, direction)
 		robot.move(sides.front);
 	else
 		work(actualDirections[direction]);
-		robot.move(actualDirections[direction])
+		correctMove(actualDirections[direction]);
 	end
 	actualDirections[direction] = nav.oposite(actualDirections[direction]);
 	actualDirections[direction - 1] = nav.oposite(actualDirections[direction - 1]);
@@ -177,16 +181,32 @@ function move(miningDirections, actualDirections)
 			diferentDirectionMove(actualDirections, 2);
 		end
 	else
-		work(direction);
-		robot.move(direction);
+		work(actualDirections[1]);
+		correctMove(actualDirections[1]);
 	end
 	return true;
 end
 
 -- Mines the block and stores the fluid in a given direction
 function work(direction)
-	robot.swing(direction);
-	robot.drain(direction);
+	if(direction == sides.top) then
+		robotapi.swingUp();
+		robotapi.drainUp();
+	elseif(direction == sides.bottom) then
+		robotapi.swingDown();
+		robotapi.drainDown();
+	else
+		robotapi.swing();
+		robotapi.drain();
+	end
+end
+
+function correctMove(direction)
+	if(direction == sides.top or direction == sides.bottom) then
+		robot.move(direction);
+	else
+		robot.move(sides.front);
+	end
 end
 
 -- Returns the ordered mining directions.
@@ -255,4 +275,4 @@ end
 
 main();
 
--- V7
+-- V8
