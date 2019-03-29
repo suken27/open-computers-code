@@ -109,7 +109,7 @@ end
 
 -- Calculates the distance from the a point to the b point
 function distanceAToB(a, b)
-	local dist = {b[1] - a[1], b[2] - a[2], b[3] - a[3]};
+	local dist = {(b[1] - a[1]), (b[2] - a[2]), (b[3] - a[3])};
 	return dist;
 end
 
@@ -257,4 +257,4 @@ end
 
 main();
 
--- V2
+-- V3
