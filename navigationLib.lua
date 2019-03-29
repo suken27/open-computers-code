@@ -146,4 +146,23 @@ function navigationlib.faceSide(side)
 	end
 end
 
+-- Gives the oposite direction
+function navigationlib.oposite(side)
+	if(side == sides.left) then
+		return sides.right;
+	elseif(side == sides.right) then
+		return sides.left;
+	elseif(side == sides.front) then
+		return sides.back;
+	elseif(side == sides.back) then
+		return sides.front;
+	elseif(side == sides.top) then
+		return sides.bottom;
+	elseif(side == sides.bottom) then
+		return sides.top;
+	else
+		error("Side: '" + side + "' is not valid.");
+	end
+end
+
 return navigationlib;
