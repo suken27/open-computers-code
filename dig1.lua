@@ -31,9 +31,6 @@ local MIN_ENERGY_PERCENTAGE = 0.1;
 -- Time to wait to fully charge in seconds
 local TIME_CHARGING = 10;
 
--- Starting mining corner sides
-local 
-
 --[[ INTERNAL FUNCTIONS ]]--
 
 -- Charges energy capacitor and empties the inventory
@@ -129,6 +126,7 @@ function diferentDirectionMove(actualDirections, direction)
 	nav.faceSide(actualDirections[direction - 1]);
 end
 
+-- Returns the corresponding axis from a given side
 function sideToCoord(side)
 	if(side == sides.left or side == sides.right) then
 		return 1;
