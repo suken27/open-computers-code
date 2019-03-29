@@ -143,7 +143,7 @@ function move(miningDirections, actualDirections)
 	local disToInitial = distanceTables(wayDis, INITIAL_DIG_POSITION);
 	local notFound = true;
 	local j = 1;
-	for(i = 1, 3, 1) do
+	for i = 1, 3, 1 do
 		while(notFound) do
 			if(miningDirections[j] == actualDirections[i]) then
 				notFound = false;
@@ -186,8 +186,8 @@ end
 function getMiningDirections()
 	local dX, dY, dZ = distanceTable(INITIAL_DIG_POSITION, FINAL_DIG_POSITION);
 	local values = {math.abs(dX), math.abs(dY), math.abs(dZ)};
-	for(i = 1, 3, 1) do
-		for(j = 2, 3, 1) do
+	for i = 1, 3, 1 do
+		for j = 2, 3, 1 do
 			if(i < j) then
 				local aux = values[i];
 				values[i] = values[j];
@@ -196,7 +196,7 @@ function getMiningDirections()
 		end
 	end
 	local result = {};
-	for(i = 1, 3, 1) do
+	for i = 1, 3, 1 do
 		if(aX == values[i]) then
 			if(dX > 0) then
 				result[i*2-1] = sides.left;
