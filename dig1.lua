@@ -86,7 +86,7 @@ end
 function goToInitial()
 	local disWay = {};
 	disWay[1], disWay[2], disWay[3] = nav.getWaypoint(RESTORING_WAYPOINT_NAME);
-	local dis = distanceTable(disWay, INITIAL_DIG_POSITION);
+	local dis = distanceAToB(disWay, INITIAL_DIG_POSITION);
 	nav.goTo(dis[1], dis[2], dis[3]);
 end
 
@@ -105,6 +105,12 @@ function distanceTable(a, b)
 	local result = {};
 	result[1], result[2], result[3] = distance(a[1], a[2], a[3], b[1], b[2], b[3]);
 	return result;
+end
+
+-- Calculates the distance from the a point to the b point
+function distanceAToB(a, b)
+	local dist = {b[1] - a[1], b[2] - a[2], b[3] - a[3]};
+	return dist;
 end
 
 -- Moves in a different direction given by direction number
@@ -251,4 +257,4 @@ end
 
 main();
 
--- V1
+-- V2
