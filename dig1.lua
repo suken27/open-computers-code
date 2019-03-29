@@ -206,24 +206,24 @@ function getMiningDirections()
 	end
 	local result = {};
 	for i = 1, 3, 1 do
-		if(aX == values[i]) then
-			if(dX > 0) then
+		if(math.abs(d[1]) == values[i]) then
+			if(d[1] > 0) then
 				result[i*2-1] = sides.left;
 				result[i*2] = sides.right;
 			else
 				result[i*2-1] = sides.right;
 				result[i*2] = sides.left;
 			end
-		elseif(aY == values[i]) then
-			if(dY > 0) then
+		elseif(math.abs(d[2]) == values[i]) then
+			if(d[2] > 0) then
 				result[i*2-1] = sides.top;
 				result[i*2] = sides.bottom;
 			else
 				result[i*2-1] = sides.bottom;
 				result[i*2] = sides.top;
 			end
-		elseif(aZ == values[i]) then
-			if(dZ > 0) then
+		elseif(math.abs(d[3]) == values[i]) then
+			if(d[3] > 0) then
 				result[i*2-1] = sides.front;
 				result[i*2] = sides.back;
 			else
@@ -257,4 +257,4 @@ end
 
 main();
 
--- V3
+-- V4
