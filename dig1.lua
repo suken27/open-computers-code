@@ -2,8 +2,8 @@
 	Digging routine for hole expansion
 ]]--
 
-local robot = require("robot");
 local comp = require("component");
+local robot = comp.robot.function();
 local sides = require("sides");
 local nav = require("navigationlib");
 local navcomp = comp.navigation;
@@ -17,7 +17,7 @@ local INITIAL_DIG_POSITION = {-4, 14, 0};
 
 -- Distance to the final dig position from
 -- the reference waypoint
-local FINAL_DIG_POSITION = {0, 0, 0};
+local FINAL_DIG_POSITION = {-4, 14, 0};
 
 -- Restoring waypoint name
 local RESTORING_WAYPOINT_NAME = "test";
@@ -53,7 +53,7 @@ function emptyInv()
 	local invSlots = robot.inventorySize();
 	for i=1, invSlots, 1 do
 		robot.select(i);
-		robot.drop();
+		robot.drop(EMPTY_INVENTORY_SIDE);
 	end
 	robot.select(1);
 end
@@ -257,4 +257,4 @@ end
 
 main();
 
--- V5
+-- V6
