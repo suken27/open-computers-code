@@ -205,7 +205,6 @@ function getMiningDirections()
 			end
 		end
 	end
-	print("DEBUG: Distances:", values[1], values[2], values[3]);
 	local result = {};
 	local asigned = {false, false, false};
 	for i = 1, 3, 1 do
@@ -240,7 +239,6 @@ function getMiningDirections()
 			error("Something went wrong.");
 		end
 	end
-	print("DEBUG: Directions:", result[1], result[2], result[3], result[4], result[5], result[6]);
 	return result;
 end
 
