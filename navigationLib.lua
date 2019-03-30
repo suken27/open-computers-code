@@ -142,7 +142,7 @@ function navigationlib.faceSide(side)
 	elseif(side == sides.left) then
 		facePositiveX();
 	else
-		error("Side: '" + side + "' is not valid.");
+		error("Side is not valid.");
 	end
 end
 
@@ -161,7 +161,7 @@ function navigationlib.oposite(side)
 	elseif(side == sides.bottom) then
 		return sides.top;
 	else
-		error("Side: '" + side + "' is not valid.");
+		error("Side:", side, "is not valid.");
 	end
 end
 

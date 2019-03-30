@@ -19,7 +19,7 @@ local INITIAL_DIG_POSITION = {4, -14, 0};
 
 -- Distance to the final dig position from
 -- the reference waypoint
-local FINAL_DIG_POSITION = {4, -14, 0};
+local FINAL_DIG_POSITION = {-14, -16, 9};
 
 -- Restoring waypoint name
 local RESTORING_WAYPOINT_NAME = "test";
@@ -52,7 +52,7 @@ function emptyInv()
 	local invSlots = robot.inventorySize();
 	for i=1, invSlots, 1 do
 		robot.select(i);
-		robot.drop(EMPTY_INVENTORY_SIDE);
+		robot.drop(sides.front);
 	end
 	robot.select(1);
 end
@@ -86,26 +86,7 @@ function goToInitial()
 	local disWay = {};
 	disWay[1], disWay[2], disWay[3] = nav.getWaypoint(RESTORING_WAYPOINT_NAME);
 	local dis = distanceAToB(disWay, INITIAL_DIG_POSITION);
-	print("DEBUG: goToInitial() Y substraction -> ", INITIAL_DIG_POSITION[2], "-", disWay[2], "=", dis[2]);
-	print("DEBUG: goToInitial() -> ", dis[1], " ", dis[2], " ", dis[3]);
 	nav.goTo(dis[1], dis[2], dis[3]);
-end
-
--- Internal function to calculate the distance
--- between two points given by waypoint distance
--- in absolute values
-function distance(xA, yA, zA, xB, yB, zB)
-	local xD = math.abs(xB - xA);
-	local yD = math.abs(yB - yA);
-	local zD = math.abs(zB - zA);
-	return xD, yD, zD;
-end
-
--- Overload of distance function using tables
-function distanceTable(a, b)
-	local result = {};
-	result[1], result[2], result[3] = distance(a[1], a[2], a[3], b[1], b[2], b[3]);
-	return result;
 end
 
 -- Calculates the distance from the a point to the b point
@@ -117,7 +98,7 @@ end
 -- Moves in a different direction given by direction number
 -- and deals with facing the right direction after it
 function diferentDirectionMove(actualDirections, direction)
-	if(actualDirections[direction] == sides.left or actualDirections[direction] == sides.right) then
+	if(not (actualDirections[direction] == sides.top or actualDirections[direction] == sides.bottom)) then
 		nav.faceSide(actualDirections[direction]);
 		work(sides.front);
 		robot.move(sides.front);
@@ -125,9 +106,12 @@ function diferentDirectionMove(actualDirections, direction)
 		work(actualDirections[direction]);
 		correctMove(actualDirections[direction]);
 	end
-	actualDirections[direction] = nav.oposite(actualDirections[direction]);
-	actualDirections[direction - 1] = nav.oposite(actualDirections[direction - 1]);
-	nav.faceSide(actualDirections[direction - 1]);
+	for i = direction - 1, 1, -1 do
+		actualDirections[i] = nav.oposite(actualDirections[i]);
+	end
+	if(not (actualDirections[1] == sides.top or actualDirections[1] == sides.bottom)) then
+		nav.faceSide(actualDirections[1]);
+	end
 end
 
 -- Returns the corresponding axis from a given side
@@ -150,8 +134,8 @@ function move(miningDirections, actualDirections)
 	local wayDis = {};
 	wayDis[1], wayDis[2], wayDis[3] = nav.getWaypoint(RESTORING_WAYPOINT_NAME);
 	local stopDis = {};
-	local disToFinal = distanceTable(wayDis, FINAL_DIG_POSITION);
-	local disToInitial = distanceTable(wayDis, INITIAL_DIG_POSITION);
+	local disToFinal = distanceAToB(wayDis, FINAL_DIG_POSITION);
+	local disToInitial = distanceAToB(wayDis, INITIAL_DIG_POSITION);
 	local notFound = true;
 	local j = 1;
 	for i = 1, 3, 1 do
@@ -169,7 +153,6 @@ function move(miningDirections, actualDirections)
 		notFound = true;
 		j = 1;
 	end
-	
 	if(stopDis[sideToCoord(actualDirections[1])] == 0) then
 		if(stopDis[sideToCoord(actualDirections[2])] == 0) then
 			if(stopDis[sideToCoord(actualDirections[3])] == 0) then
@@ -211,20 +194,23 @@ end
 
 -- Returns the ordered mining directions.
 function getMiningDirections()
-	local d = distanceTable(INITIAL_DIG_POSITION, FINAL_DIG_POSITION);
+	local d = distanceAToB(INITIAL_DIG_POSITION, FINAL_DIG_POSITION);
 	local values = {math.abs(d[1]), math.abs(d[2]), math.abs(d[3])};
 	for i = 1, 3, 1 do
-		for j = 2, 3, 1 do
-			if(i < j) then
+		for j = i+1, 3, 1 do
+			if(values[i] < values[j]) then
 				local aux = values[i];
 				values[i] = values[j];
 				values[j] = aux;
 			end
 		end
 	end
+	print("DEBUG: Distances:", values[1], values[2], values[3]);
 	local result = {};
+	local asigned = {false, false, false};
 	for i = 1, 3, 1 do
-		if(math.abs(d[1]) == values[i]) then
+		if(math.abs(d[1]) == values[i] and not asigned[1]) then
+			asigned[1] = true;
 			if(d[1] > 0) then
 				result[i*2-1] = sides.left;
 				result[i*2] = sides.right;
@@ -232,7 +218,8 @@ function getMiningDirections()
 				result[i*2-1] = sides.right;
 				result[i*2] = sides.left;
 			end
-		elseif(math.abs(d[2]) == values[i]) then
+		elseif(math.abs(d[2]) == values[i] and not asigned[2]) then
+			asigned[2] = true;
 			if(d[2] > 0) then
 				result[i*2-1] = sides.top;
 				result[i*2] = sides.bottom;
@@ -240,7 +227,8 @@ function getMiningDirections()
 				result[i*2-1] = sides.bottom;
 				result[i*2] = sides.top;
 			end
-		elseif(math.abs(d[3]) == values[i]) then
+		elseif(math.abs(d[3]) == values[i] and not asigned[3]) then
+			asigned[3] = true;
 			if(d[3] > 0) then
 				result[i*2-1] = sides.front;
 				result[i*2] = sides.back;
@@ -252,6 +240,7 @@ function getMiningDirections()
 			error("Something went wrong.");
 		end
 	end
+	print("DEBUG: Directions:", result[1], result[2], result[3], result[4], result[5], result[6]);
 	return result;
 end
 
