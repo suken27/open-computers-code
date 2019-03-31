@@ -17,98 +17,49 @@ local WAYPOINT_SEARCH_RANGE = 200;
 
 -- Faces to positive X coordinate
 function facePositiveX()
-	while(not (nav.getFacing() == sides.left)) do
+	local facing = nav.getFacing();
+	if(facing == sides.right) then
+		robot.turnAround();
+	elseif(facing == sides.front) then
+		robot.turnLeft();
+	elseif(facing == sides.back) then
 		robot.turnRight();
 	end
 end
 
 -- Faces to negative X coordinate
 function faceNegativeX()
-	while(not (nav.getFacing() == sides.right)) do
+	local facing = nav.getFacing();
+	if(facing == sides.left) then
+		robot.turnAround();
+	elseif(facing == sides.front) then
 		robot.turnRight();
+	elseif(facing == sides.back) then
+		robot.turnLeft();
 	end
 end
 
 -- Faces to positive Z coordinate
 function facePositiveZ()
-	while(not (nav.getFacing() == sides.front)) do
+	local facing = nav.getFacing();
+	if(facing == sides.back) then
+		robot.turnAround();
+	elseif(facing == sides.right) then
+		robot.turnLeft();
+	elseif(facing == sides.left) then
 		robot.turnRight();
 	end
 end
 
 -- Faces to negative Z coordinate
 function faceNegativeZ()
-	while(not (nav.getFacing() == sides.back)) do
+	local facing = nav.getFacing();
+	if(facing == sides.front) then
+		robot.turnAround();
+	elseif(facing == sides.right) then
 		robot.turnRight();
-	end
-end
-
--- Goes to a given X position given by the difference 
--- with the actual position
-function goToX(xDif)
-	if(xDif == 0 or xDif == nil) then
-		return;
-	end
-	local value = math.abs(xDif);
-	if(xDif < 0) then
-		faceNegativeX();
-	else
-		facePositiveX();
-	end
-	for i=1, value, 1 do
-		robot.forward();
-	end
-end
-
--- Goes to a given Z position given by the difference 
--- with the actual position
-function goToZ(zDif)
-	if(zDif == 0 or zDif == nil) then
-		return;
-	end
-	local value = math.abs(zDif);
-	if(zDif < 0) then
-		faceNegativeZ();
-	else
-		facePositiveZ();
-	end
-	for i=1, value, 1 do
-		robot.forward();
-	end
-end
-
--- Goes to a given Y position given by the difference 
--- with the actual position
-function goToY(yDif)
-	if(yDif == 0 or yDif == nil) then
-		return;
-	end
-	local value = math.abs(yDif);
-	
-	if(yDif < 0) then
-		for i=1, value, 1 do
-			robot.down();
-		end
-	else
-		for i=1, value, 1 do
-			robot.up();
-		end
-	end
-end
-
---[[ MODULE FUNCTIONS ]]--
-
--- Goes to a position given by the difference with
--- the actual position
-function navigationlib.goTo(xDif, yDif, zDif)
-	if(yDif < 0) then
-		goToX(xDif);
-		goToZ(zDif);
-		goToY(yDif);
-	else
-		goToY(yDif);
-		goToX(xDif);
-		goToZ(zDif);
+	elseif(facing == sides.left) then
+		robot.turnLeft();
 	end
 end
 
@@ -163,6 +114,10 @@ function navigationlib.oposite(side)
 	else
 		error("Side:", side, "is not valid.");
 	end
+end
+
+function navigationlib.getFacing()
+	return nav.getFacing();
 end
 
 return navigationlib;

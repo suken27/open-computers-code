@@ -1,17 +1,20 @@
 --[[
-	Digging routine for hole expansion
+	Digging routine
 ]]--
 
 local comp = require("component");
 local robot = comp.robot;
 local robotapi = require("robot");
 local sides = require("sides");
-local nav = require("navigationlib");
-local navcomp = comp.navigation;
+local navlib = require("navigationlib");
+local nav = require("nav");
 local os = require("os");
 local computer = require("computer");
+local waypoint = require("waypoint");
 
 --[[ SETTINGS ]]--
+
+-- 854 -753 4
 
 -- Distance to the initial dig position
 -- from the reference waypoint
@@ -37,18 +40,20 @@ local TIME_CHARGING = 10;
 
 -- Charges energy capacitor and empties the inventory
 function restoreAndGoBack()
-	local facing = navcomp.getFacing();
-	local xRet, yRet, zRet = nav.getWaypoint(RESTORING_WAYPOINT_NAME);
-	nav.goTo(xRet, yRet, zRet);
+	local facing = navlib.getFacing();
+	local xRet, yRet, zRet = navlib.getWaypoint(RESTORING_WAYPOINT_NAME);
+	local m = nav:new();
+	m:go(zRet, xRet, yRet);
 	emptyInv();
 	os.sleep(TIME_CHARGING);
-	nav.goTo((xRet * -1), (yRet * -1), (zRet * -1));
-	nav.faceSide(facing);
+	m = nav:new();
+	m:go((zRet * -1), (xRet * -1), (yRet * -1));
+	navlib.faceSide(facing);
 end
 
 -- Empties inventory and returns to the position it was
 function emptyInv()
-	nav.faceSide(EMPTY_INVENTORY_SIDE);
+	navlib.faceSide(EMPTY_INVENTORY_SIDE);
 	local invSlots = robot.inventorySize();
 	for i=1, invSlots, 1 do
 		robot.select(i);
@@ -84,9 +89,10 @@ end
 -- Goes to the initial position
 function goToInitial()
 	local disWay = {};
-	disWay[1], disWay[2], disWay[3] = nav.getWaypoint(RESTORING_WAYPOINT_NAME);
+	disWay[1], disWay[2], disWay[3] = navlib.getWaypoint(RESTORING_WAYPOINT_NAME);
 	local dis = distanceAToB(disWay, INITIAL_DIG_POSITION);
-	nav.goTo(dis[1], dis[2], dis[3]);
+	local m = nav:new();
+	m:go(dis[3], dis[1], dis[2]);
 end
 
 -- Calculates the distance from the a point to the b point
@@ -99,7 +105,7 @@ end
 -- and deals with facing the right direction after it
 function diferentDirectionMove(actualDirections, direction)
 	if(not (actualDirections[direction] == sides.top or actualDirections[direction] == sides.bottom)) then
-		nav.faceSide(actualDirections[direction]);
+		navlib.faceSide(actualDirections[direction]);
 		work(sides.front);
 		robot.move(sides.front);
 	else
@@ -107,10 +113,10 @@ function diferentDirectionMove(actualDirections, direction)
 		correctMove(actualDirections[direction]);
 	end
 	for i = direction - 1, 1, -1 do
-		actualDirections[i] = nav.oposite(actualDirections[i]);
+		actualDirections[i] = navlib.oposite(actualDirections[i]);
 	end
 	if(not (actualDirections[1] == sides.top or actualDirections[1] == sides.bottom)) then
-		nav.faceSide(actualDirections[1]);
+		navlib.faceSide(actualDirections[1]);
 	end
 end
 
@@ -132,7 +138,7 @@ end
 -- direction
 function move(miningDirections, actualDirections)
 	local wayDis = {};
-	wayDis[1], wayDis[2], wayDis[3] = nav.getWaypoint(RESTORING_WAYPOINT_NAME);
+	wayDis[1], wayDis[2], wayDis[3] = navlib.getWaypoint(RESTORING_WAYPOINT_NAME);
 	local stopDis = {};
 	local disToFinal = distanceAToB(wayDis, FINAL_DIG_POSITION);
 	local disToInitial = distanceAToB(wayDis, INITIAL_DIG_POSITION);
@@ -245,21 +251,23 @@ end
 -- Main execution
 function main()
 	print("Begining the preparations...");
+	local w = waypoint:new(RESTORING_WAYPOINT_NAME, {854, -753, 4});
 	goToInitial();
 	local miningDirections = getMiningDirections();
 	local actualDirections = {miningDirections[1], miningDirections[3], miningDirections[5]};
 	if(not (actualDirections[1] == sides.top or actualDirections[1] == sides.bottom)) then
-		nav.faceSide(actualDirections[1]);
+		navlib.faceSide(actualDirections[1]);
 	end
 	print("Preparations done, starting digging routine.");
 	while(move(miningDirections, actualDirections)) do
 		energyCheck();
 		spaceCheck();
 	end
-	nav.goToWaypoint(RESTORING_WAYPOINT_NAME);
+	navlib.goToWaypoint(RESTORING_WAYPOINT_NAME);
 	print("Digging routine successfully finished.");
 end
 
-main();
+local m = nav:new();
+local w = waypoint:new(RESTORING_WAYPOINT_NAME, {854, -753, 4});
 
 -- V8
