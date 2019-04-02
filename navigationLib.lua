@@ -63,25 +63,6 @@ function faceNegativeZ()
 	end
 end
 
--- Returns the distance to a given waypoint name
--- (a distance per coordinate)
-function navigationlib.getWaypoint(name)
-	local waypoints = nav.findWaypoints(WAYPOINT_SEARCH_RANGE);
-	local i = 1;
-	while(not (waypoints[i] == nil)) do
-		if(waypoints[i].label == name) then
-			return waypoints[i].position[1], waypoints[i].position[2], waypoints[i].position[3];
-		end
-		i = i + 1;
-	end
-	return nil;
-end
-
--- Goes to a given waypoint
-function navigationlib.goToWaypoint(name)
-	navigationlib.goTo(navigationlib.getWaypoint(name));
-end
-
 -- Faces a given side
 function navigationlib.faceSide(side)
 	if(side == sides.back) then

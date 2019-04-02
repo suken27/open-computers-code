@@ -14,15 +14,11 @@ local waypoint = require("waypoint");
 
 --[[ SETTINGS ]]--
 
--- 854 -753 4
+local INITIAL_DIG_POSITION = {850, 20, -756};
+local FINAL_DIG_POSITION = {853, 19, -758};
 
--- Distance to the initial dig position
--- from the reference waypoint
-local INITIAL_DIG_POSITION = {4, -14, 0};
-
--- Distance to the final dig position from
--- the reference waypoint
-local FINAL_DIG_POSITION = {-14, -16, 9};
+-- Restoring waypoint coordinates
+local RESTORING_WAYPOINT_COORDS = {854, 4, -753};
 
 -- Restoring waypoint name
 local RESTORING_WAYPOINT_NAME = "test";
@@ -36,18 +32,24 @@ local MIN_ENERGY_PERCENTAGE = 0.1;
 -- Time to wait to fully charge in seconds
 local TIME_CHARGING = 10;
 
+local w = waypoint:new(RESTORING_WAYPOINT_NAME, RESTORING_WAYPOINT_COORDS);
+
 --[[ INTERNAL FUNCTIONS ]]--
+
+function go(distance)
+	navlib.faceSide(sides.front);
+	local m = nav:new();
+	m:go({distance[3], distance[1] * -1, distance[2]});
+end
 
 -- Charges energy capacitor and empties the inventory
 function restoreAndGoBack()
 	local facing = navlib.getFacing();
-	local xRet, yRet, zRet = navlib.getWaypoint(RESTORING_WAYPOINT_NAME);
-	local m = nav:new();
-	m:go(zRet, xRet, yRet);
+	local wayp = w:getWaypoint();
+	go(wayp);
 	emptyInv();
 	os.sleep(TIME_CHARGING);
-	m = nav:new();
-	m:go((zRet * -1), (xRet * -1), (yRet * -1));
+	m:go({wayp[1] * -1, wayp[2] * -1, wayp[3] * -1});
 	navlib.faceSide(facing);
 end
 
@@ -88,22 +90,19 @@ end
 
 -- Goes to the initial position
 function goToInitial()
-	local disWay = {};
-	disWay[1], disWay[2], disWay[3] = navlib.getWaypoint(RESTORING_WAYPOINT_NAME);
-	local dis = distanceAToB(disWay, INITIAL_DIG_POSITION);
-	local m = nav:new();
-	m:go(dis[3], dis[1], dis[2]);
+	local dis = w:distance(INITIAL_DIG_POSITION);
+	go(dis);
 end
 
 -- Calculates the distance from the a point to the b point
 function distanceAToB(a, b)
-	local dist = {(a[1] - b[1]), (a[2] - b[2]), (a[3] - b[3])};
+	local dist = {(b[1] - a[1]), (b[2] - a[2]), (b[3] - a[3])};
 	return dist;
 end
 
 -- Moves in a different direction given by direction number
 -- and deals with facing the right direction after it
-function diferentDirectionMove(actualDirections, direction)
+function diferentDirectionMove(actualDirections, actualDirections2, direction)
 	if(not (actualDirections[direction] == sides.top or actualDirections[direction] == sides.bottom)) then
 		navlib.faceSide(actualDirections[direction]);
 		work(sides.front);
@@ -114,6 +113,7 @@ function diferentDirectionMove(actualDirections, direction)
 	end
 	for i = direction - 1, 1, -1 do
 		actualDirections[i] = navlib.oposite(actualDirections[i]);
+		actualDirections2[i] = not actualDirections2[i];
 	end
 	if(not (actualDirections[1] == sides.top or actualDirections[1] == sides.bottom)) then
 		navlib.faceSide(actualDirections[1]);
@@ -136,38 +136,28 @@ end
 -- Moves to the next position to mine, it recieves
 -- the local state of the movement and the minning
 -- direction
-function move(miningDirections, actualDirections)
-	local wayDis = {};
-	wayDis[1], wayDis[2], wayDis[3] = navlib.getWaypoint(RESTORING_WAYPOINT_NAME);
+function move(miningDirections, actualDirections, actualDirections2)
 	local stopDis = {};
-	local disToFinal = distanceAToB(wayDis, FINAL_DIG_POSITION);
-	local disToInitial = distanceAToB(wayDis, INITIAL_DIG_POSITION);
+	local disToFinal = w:distance(FINAL_DIG_POSITION);
+	local disToInitial = w:distance(INITIAL_DIG_POSITION);
 	local notFound = true;
 	local j = 1;
 	for i = 1, 3, 1 do
-		while(notFound) do
-			if(miningDirections[j] == actualDirections[i]) then
-				notFound = false;
-				if(j%2 == 0) then
-					stopDis[i] = disToInitial[i];
-				else
-					stopDis[i] = disToFinal[i];
-				end
-			end
-			j = j + 1;
+		if(actualDirections2[i]) then
+			stopDis[i] = disToFinal[sideToCoord(actualDirections[i])];
+		else
+			stopDis[i] = disToInitial[sideToCoord(actualDirections[i])];
 		end
-		notFound = true;
-		j = 1;
 	end
-	if(stopDis[sideToCoord(actualDirections[1])] == 0) then
-		if(stopDis[sideToCoord(actualDirections[2])] == 0) then
-			if(stopDis[sideToCoord(actualDirections[3])] == 0) then
+	if(stopDis[1] == 0) then
+		if(stopDis[2] == 0) then
+			if(stopDis[3] == 0) then
 				return false;
 			else
-				diferentDirectionMove(actualDirections, 3);
+				diferentDirectionMove(actualDirections, actualDirections2, 3);
 			end
 		else
-			diferentDirectionMove(actualDirections, 2);
+			diferentDirectionMove(actualDirections, actualDirections2, 2);
 		end
 	else
 		work(actualDirections[1]);
@@ -179,14 +169,26 @@ end
 -- Mines the block and stores the fluid in a given direction
 function work(direction)
 	if(direction == sides.top) then
-		robotapi.swingUp();
-		robotapi.drainUp();
+		_, substance = robotapi.detectUp();
+		if(substance == "solid") then
+			robotapi.swingUp();
+		elseif(substance == "liquid") then
+			robotapi.drainUp();
+		end
 	elseif(direction == sides.bottom) then
-		robotapi.swingDown();
-		robotapi.drainDown();
+		_, substance = robotapi.detectDown();
+		if(substance == "solid") then
+			robotapi.swingDown();
+		elseif(substance == "liquid") then
+			robotapi.drainDown();
+		end
 	else
-		robotapi.swing();
-		robotapi.drain();
+		_, substance = robotapi.detect();
+		if(substance == "solid") then
+			robotapi.swing();
+		elseif(substance == "liquid") then
+			robotapi.drain();
+		end
 	end
 end
 
@@ -251,23 +253,20 @@ end
 -- Main execution
 function main()
 	print("Begining the preparations...");
-	local w = waypoint:new(RESTORING_WAYPOINT_NAME, {854, -753, 4});
 	goToInitial();
 	local miningDirections = getMiningDirections();
 	local actualDirections = {miningDirections[1], miningDirections[3], miningDirections[5]};
+	local actualDirections2 = {true, true, true};
 	if(not (actualDirections[1] == sides.top or actualDirections[1] == sides.bottom)) then
 		navlib.faceSide(actualDirections[1]);
 	end
 	print("Preparations done, starting digging routine.");
-	while(move(miningDirections, actualDirections)) do
+	while(move(miningDirections, actualDirections, actualDirections2)) do
 		energyCheck();
 		spaceCheck();
 	end
-	navlib.goToWaypoint(RESTORING_WAYPOINT_NAME);
+	go(w:getWaypoint());
 	print("Digging routine successfully finished.");
 end
 
-local m = nav:new();
-local w = waypoint:new(RESTORING_WAYPOINT_NAME, {854, -753, 4});
-
--- V8
+main();

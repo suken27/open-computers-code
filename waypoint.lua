@@ -1,13 +1,16 @@
 local component = require("component");
-local navigation = component.navigation;
+local nav = component.navigation;
 
 local clsWaypoint = {};
+clsWaypoint.title = "Waypoint Library";
+clsWaypoint.shortTitle = "waypoint";
+clsWaypoint.version = 0.1000;
 
 --[[ OBJECT VARIABLES ]]--
 
 clsWaypoint.waypointSearchRange = 200;
-clsWaypoint.name;
-clsWaypoint.waypointCoordinates;
+clsWaypoint.name = "";
+clsWaypoint.waypointCoordinates = {0, 0, 0};
 
 --[[ LOCAL FUNCTIONS ]]--
 
@@ -26,26 +29,23 @@ function clsWaypoint:new(name, coords, waypointSearchRange)
 		return false, "All three coordinates need to be valid numbers.";
 	end
 	object.name = name;
-	object.coords = waypointCoordinates;
+	object.waypointCoordinates = coords;
 	if(type(waypointCoordinates) == "number") then
 		object.waypointCoordinates = waypointSearchRange;
 	end
 	setmetatable(object, self)
 	self.__index = self
-	local ok, message = self.getWaypoint();
-	if(not ok) then
-		return false, message;
-	end
 	return object
 end
 
 -- Returns the distance to this waypoint
 function clsWaypoint:getWaypoint()
-	local waypoints = nav.findWaypoints(WAYPOINT_SEARCH_RANGE);
+	local waypoints = nav.findWaypoints(self.waypointSearchRange);
 	local i = 1;
 	while(not (waypoints[i] == nil)) do
 		if(waypoints[i].label == self.name) then
-			return waypoints[i].position[1], waypoints[i].position[2], waypoints[i].position[3];
+			local result = {waypoints[i].position[1], waypoints[i].position[2], waypoints[i].position[3]};
+			return result;
 		end
 		i = i + 1;
 	end
@@ -54,12 +54,13 @@ end
 
 -- Calculates the distance from the robot to a given coordinates
 function clsWaypoint:distance(coords)
-	result = {};
-	actual = self.getWaypoint();
+	local result = {};
+	local actual = self:getWaypoint();
+	local fixedCoords = {self.waypointCoordinates[1] - coords[1], self.waypointCoordinates[2] - coords[2], self.waypointCoordinates[3] - coords[3]};
 	for i = 1, 3, 1 do
-		result[i] = coords[i] - self.coords[i];
+		result[i] =  actual[i] - fixedCoords[i];
 	end
 	return result;
 end
 
-return waypoint;
+return clsWaypoint;
