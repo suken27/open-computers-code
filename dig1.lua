@@ -49,7 +49,7 @@ function restoreAndGoBack()
 	go(wayp);
 	emptyInv();
 	os.sleep(TIME_CHARGING);
-	m:go({wayp[1] * -1, wayp[2] * -1, wayp[3] * -1});
+	go({wayp[1] * -1, wayp[2] * -1, wayp[3] * -1});
 	navlib.faceSide(facing);
 end
 
