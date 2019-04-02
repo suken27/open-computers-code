@@ -33,12 +33,15 @@ local MIN_ENERGY_PERCENTAGE = 0.1;
 local TIME_CHARGING = 10;
 
 local w = waypoint:new(RESTORING_WAYPOINT_NAME, RESTORING_WAYPOINT_COORDS);
+local m = nav:new();
 
 --[[ INTERNAL FUNCTIONS ]]--
 
 function go(distance)
 	navlib.faceSide(sides.front);
-	local m = nav:new();
+	m:setPos({-1, 0, 0});
+	m:setPos(0);
+	m:putMap({-1, 0, 0}, {});
 	m:go({distance[3], distance[1] * -1, distance[2]});
 end
 
@@ -49,7 +52,7 @@ function restoreAndGoBack()
 	go(wayp);
 	emptyInv();
 	os.sleep(TIME_CHARGING);
-	go({wayp[1] * -1, wayp[2] * -1, wayp[3] * -1});
+	go({wayp[1] * -1, wayp[2], wayp[3] * -1});
 	navlib.faceSide(facing);
 end
 
@@ -170,21 +173,21 @@ end
 function work(direction)
 	if(direction == sides.top) then
 		_, substance = robotapi.detectUp();
-		if(substance == "solid") then
+		if(substance == "solid" or substance == "replaceable" or substance == "passable") then
 			robotapi.swingUp();
 		elseif(substance == "liquid") then
 			robotapi.drainUp();
 		end
 	elseif(direction == sides.bottom) then
 		_, substance = robotapi.detectDown();
-		if(substance == "solid") then
+		if(substance == "solid" or substance == "replaceable" or substance == "passable") then
 			robotapi.swingDown();
 		elseif(substance == "liquid") then
 			robotapi.drainDown();
 		end
 	else
 		_, substance = robotapi.detect();
-		if(substance == "solid") then
+		if(substance == "solid" or substance == "replaceable" or substance == "passable") then
 			robotapi.swing();
 		elseif(substance == "liquid") then
 			robotapi.drain();
