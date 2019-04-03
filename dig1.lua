@@ -12,6 +12,23 @@ local os = require("os");
 local computer = require("computer");
 local waypoint = require("waypoint");
 
+local clsDig = {};
+clsDig.title = "Dig Routine";
+clsDig.shortTitle = "dig";
+clsDig.version = 0.1000;
+
+--[[ OBJECT VARIABLES ]]--
+
+clsDig.initialDigPosition = {};
+clsDig.finalDigPosition = {};
+clsDig.restoringWaypointCoords = {};
+clsDig.restoringWaypointName = {};
+clsDig.emptyInventorySide = 0;
+clsDig.minEnergyPercentage = 0.2;
+clsDig.timeCharging = 20;
+clsDig.w = {};
+clsDig.m = nav:new();
+
 --[[ SETTINGS ]]--
 
 local INITIAL_DIG_POSITION = {850, 20, -756};
@@ -27,15 +44,15 @@ local RESTORING_WAYPOINT_NAME = "test";
 local EMPTY_INVENTORY_SIDE = sides.left;
 
 -- Minimum percentage of energy to keep working
-local MIN_ENERGY_PERCENTAGE = 0.1;
+local MIN_ENERGY_PERCENTAGE = 0.2;
 
 -- Time to wait to fully charge in seconds
-local TIME_CHARGING = 10;
+local TIME_CHARGING = 20;
 
 local w = waypoint:new(RESTORING_WAYPOINT_NAME, RESTORING_WAYPOINT_COORDS);
 local m = nav:new();
 
---[[ INTERNAL FUNCTIONS ]]--
+--[[ LOCAL FUNCTIONS ]]--
 
 function go(distance)
 	navlib.faceSide(sides.front);
@@ -270,6 +287,16 @@ function main()
 	end
 	go(w:getWaypoint());
 	print("Digging routine successfully finished.");
+end
+
+--[[ METHODS ]]--
+
+functioni clsDig:new()
+
+end
+
+function clsDig:dig()
+
 end
 
 main();
