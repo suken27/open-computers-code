@@ -2,22 +2,63 @@
 	Common robot navigation functionality.
 ]]--
 
-local navigationlib = {};
-
 local robot = require("robot");
 local comp = require("component");
 local sides = require("sides");
-local nav = comp.navigation;
+local waypoint = require("waypoint");
+local nav = require("nav");
+local navcomp = comp.navigation;
 
---[[ SETTINGS ]]--
+local clsNavlib = {};
 
-local WAYPOINT_SEARCH_RANGE = 200;
+clsNavlib.title = "Navigation Library";
+clsNavlib.shortTitle = "navlib";
+clsNavlib.version = 0.1000;
 
---[[ INTERNAL FUNCTIONS ]]--
+--[[ OBJECT VARIABLES ]]--
+
+clsNavlib.w = {};
+clsNavlib.m = {};
+
+--[[ LOCAL FUNCTIONS ]]--
+
+--[[ METHODS ]]--
+
+function clsNavlib:new()
+	local object = {};
+	setmetatable(object, self)
+	self.__index = self
+	return object
+end
+
+function clsNavlib:setNav(navObject)
+	if(type(navObject ~= "table") then
+		error("The given parameter was not a table.");
+	end
+	if(not navObject.title or navObject.title ~= "Navigation Library") then
+		error("The given parameter was not a navigation object.");
+	end
+	self.m = navObject;
+end
+
+function clsNavlib:setWaypoint(waypointObject)
+	if(type(waypointObject ~= "table") then
+		error("The given parameter was not a table.");
+	end
+	if(not waypointObject.title or waypointObject.title ~= "Waypoint Library") then
+		error("The given parameter was not a waypoint object.");
+	end
+	self.w = waypointObject;
+end
+
+function clsNavlib:go(coords)
+	-- TODO I need to know how is the nav:go working
+	-- if {1, 0, 0} is a distance or a relative position
+end
 
 -- Faces to positive X coordinate
-function facePositiveX()
-	local facing = nav.getFacing();
+function clsNavlib:facePositiveX()
+	local facing = navcomp.getFacing();
 	if(facing == sides.right) then
 		robot.turnAround();
 	elseif(facing == sides.front) then
@@ -28,8 +69,8 @@ function facePositiveX()
 end
 
 -- Faces to negative X coordinate
-function faceNegativeX()
-	local facing = nav.getFacing();
+function clsNavlib:faceNegativeX()
+	local facing = navcomp.getFacing();
 	if(facing == sides.left) then
 		robot.turnAround();
 	elseif(facing == sides.front) then
@@ -40,8 +81,8 @@ function faceNegativeX()
 end
 
 -- Faces to positive Z coordinate
-function facePositiveZ()
-	local facing = nav.getFacing();
+function clsNavlib:facePositiveZ()
+	local facing = navcomp.getFacing();
 	if(facing == sides.back) then
 		robot.turnAround();
 	elseif(facing == sides.right) then
@@ -52,8 +93,8 @@ function facePositiveZ()
 end
 
 -- Faces to negative Z coordinate
-function faceNegativeZ()
-	local facing = nav.getFacing();
+function clsNavlib:faceNegativeZ()
+	local facing = navcomp.getFacing();
 	if(facing == sides.front) then
 		robot.turnAround();
 	elseif(facing == sides.right) then
@@ -64,7 +105,7 @@ function faceNegativeZ()
 end
 
 -- Faces a given side
-function navigationlib.faceSide(side)
+function clsNavlib:faceSide(side)
 	if(side == sides.back) then
 		faceNegativeZ();
 	elseif(side == sides.front) then
@@ -79,7 +120,7 @@ function navigationlib.faceSide(side)
 end
 
 -- Gives the oposite direction
-function navigationlib.oposite(side)
+function clsNavlib:oposite(side)
 	if(side == sides.left) then
 		return sides.right;
 	elseif(side == sides.right) then
@@ -97,8 +138,8 @@ function navigationlib.oposite(side)
 	end
 end
 
-function navigationlib.getFacing()
-	return nav.getFacing();
+function clsNavlib:getFacing()
+	return navcomp.getFacing();
 end
 
-return navigationlib;
+return clsNavlib;

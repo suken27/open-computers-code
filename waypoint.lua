@@ -20,22 +20,53 @@ clsWaypoint.waypointCoordinates = {0, 0, 0};
 function clsWaypoint:new(name, coords, waypointSearchRange)
 	local object = {};
 	if(not name or not coords) then
-		return false, "Name and coordinates are needed.";
+		error("Name and coordinates are needed.");
 	end
 	if(type(coords) ~= "table") then
-		return false, "The coordinates' format is {x, y, z}.";
+		error("The coordinates' format is {x, y, z}.");
 	end
 	if(type(coords[1]) ~= "number" or type(coords[2]) ~= "number" or type(coords[3]) ~= "number") then
-		return false, "All three coordinates need to be valid numbers.";
+		error("All three coordinates need to be valid numbers.");
 	end
 	object.name = name;
 	object.waypointCoordinates = coords;
-	if(type(waypointCoordinates) == "number") then
-		object.waypointCoordinates = waypointSearchRange;
+	if(type(waypointSearchRange) == "number") then
+		object.waypointSearchRange = waypointSearchRange;
 	end
 	setmetatable(object, self)
 	self.__index = self
 	return object
+end
+
+function clsWaypoint:new()
+	local object = {};
+	setmetatable(object, self)
+	self.__index = self
+	return object
+end
+
+function clsWaypoint:setName(name)
+	if(not name) then
+		error("A name is needed.");
+	end
+	self.name = name;
+end
+
+function clsWaypoint:setCoordinates(coordinates)
+	if(type(coordinates) ~= "table") then
+		error("The coordinates' format is {x, y, z}.");
+	end
+	if(type(coordinates[1]) ~= "number" or type(coordinates[2]) ~= "number" or type(coordinates[3]) ~= "number") then
+		error("All three coordinates need to be valid numbers.");
+	end
+	self.waypointCoordinates = coordinates;
+end
+
+function clsWaypoint:setWaypointSearchRange(searchRange)
+	if(not type(searchRange) == "number" or searchRange < 0) then
+		error("The waypoint search range must be a positive number.");
+	end
+	self.waypointSearchRange = searchRange;
 end
 
 -- Returns the distance to this waypoint
@@ -49,7 +80,7 @@ function clsWaypoint:getWaypoint()
 		end
 		i = i + 1;
 	end
-	return false, "The waypoint is not in range";
+	error("The waypoint is not in range");
 end
 
 -- Calculates the distance from the robot to a given coordinates
